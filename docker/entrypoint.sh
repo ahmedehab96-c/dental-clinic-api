@@ -11,6 +11,21 @@ if [ -z "${APP_URL:-}" ] && [ -n "${RENDER_EXTERNAL_URL:-}" ]; then
   export APP_URL="${RENDER_EXTERNAL_URL}"
 fi
 
+# This Dockerfile/entrypoint only runs in the free-tier Render demo
+# deployment (local dev uses `php artisan serve` directly, no Docker) — so
+# it's safe to hardcode demo-appropriate defaults here rather than depend on
+# dashboard-configured env vars (this Render CLI has no env-var subcommand).
+: "${DB_CONNECTION:=sqlite}"
+: "${SEED_ON_START:=true}"
+: "${APP_ENV:=production}"
+: "${APP_DEBUG:=false}"
+: "${SESSION_DRIVER:=file}"
+: "${CACHE_STORE:=file}"
+: "${QUEUE_CONNECTION:=sync}"
+: "${MAIL_MAILER:=log}"
+: "${FRONTEND_URL:=https://ahmedmyportofilo.netlify.app}"
+: "${SANCTUM_STATEFUL_DOMAINS:=ahmedmyportofilo.netlify.app}"
+
 # Ensure a usable APP_KEY is available to the PHP process. Platform CLIs can
 # mangle base64 padding (`=`) when passing env vars, so always normalize here.
 case "${APP_KEY:-}" in
